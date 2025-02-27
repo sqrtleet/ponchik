@@ -20,13 +20,13 @@ class ClientSubsriptions:
 
 
 
-class WriteDTO(DataclassDTO[Client]):
+class WriteDTO(DataclassDTO[ClientSubsriptions]):
     config = DTOConfig(exclude = {'id'})
 
 
-class ReadDTO(DataclassDTO[Client]):
+class ReadDTO(DataclassDTO[ClientSubsriptions]):
     config = DTOConfig(exclude = {''})
 
 
-class PatchDTO(DataclassDTO[Client]):
+class PatchDTO(DataclassDTO[ClientSubsriptions]):
     config = DTOConfig(exclude={'id'}, partial = True)

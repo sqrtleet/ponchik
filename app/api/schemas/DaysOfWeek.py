@@ -15,13 +15,13 @@ class DaysOfWeek:
 
 
 
-class WriteDTO(DataclassDTO[Client]):
+class WriteDTO(DataclassDTO[DaysOfWeek]):
     config = DTOConfig(exclude = {'id'})
 
 
-class ReadDTO(DataclassDTO[Client]):
+class ReadDTO(DataclassDTO[DaysOfWeek]):
     config = DTOConfig(exclude = {''})
 
 
-class PatchDTO(DataclassDTO[Client]):
+class PatchDTO(DataclassDTO[DaysOfWeek]):
     config = DTOConfig(exclude={'id'}, partial = True)
