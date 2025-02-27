@@ -14,13 +14,13 @@ class RemainingSessions:
     lust_update: str = field(default = None)
 
 
-class WriteDTO(DataclassDTO[Client]):
+class WriteDTO(DataclassDTO[RemainingSessions]):
     config = DTOConfig(exclude = {'id'})
 
 
-class ReadDTO(DataclassDTO[Client]):
+class ReadDTO(DataclassDTO[RemainingSessions]):
     config = DTOConfig(exclude = {''})
 
 
-class PatchDTO(DataclassDTO[Client]):
+class PatchDTO(DataclassDTO[RemainingSessions]):
     config = DTOConfig(exclude={'id'}, partial = True)

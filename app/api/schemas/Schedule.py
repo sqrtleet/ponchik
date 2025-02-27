@@ -14,13 +14,13 @@ class Schedule:
 
 
 
-class WriteDTO(DataclassDTO[Client]):
+class WriteDTO(DataclassDTO[Schedule]):
     config = DTOConfig(exclude = {'id'})
 
 
-class ReadDTO(DataclassDTO[Client]):
+class ReadDTO(DataclassDTO[Schedule]):
     config = DTOConfig(exclude = {''})
 
 
-class PatchDTO(DataclassDTO[Client]):
+class PatchDTO(DataclassDTO[Schedule]):
     config = DTOConfig(exclude={'id'}, partial = True)
