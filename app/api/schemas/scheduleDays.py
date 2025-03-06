@@ -5,10 +5,11 @@ from dataclasses import dataclass, field
 from litestar.dto import DataclassDTO, DTOConfig
 
 from app.api.enums.daysOfWeek import DaysOfWeek
+from app.api.schemas.schedule import Schedule
 
 
 @dataclass
 
 class ScheduleDays:
-    id: int = field(init=False, default_factory=count().__next__)
+    schedule_id: Schedule = field(default = None)
     day_of_week_id: DaysOfWeek = field(default = None)

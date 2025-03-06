@@ -3,13 +3,15 @@ from dataclasses import dataclass, field
 
 
 from litestar.dto import DataclassDTO, DTOConfig
+from app.api.schemas.trainer import Trainer
 
+from app.api.schemas.subscription import Subscription
 
 @dataclass
 
 class Schedule:
     id: int = field(init=False, default_factory=count().__next__)
-    subsription_id: int = field(default = None)
+    subsription_id: Subscription = field(default = None)
     time: str = field(default = None)
 
 
