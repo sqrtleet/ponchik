@@ -4,12 +4,13 @@ from dataclasses import dataclass, field
 
 from litestar.dto import DataclassDTO, DTOConfig
 
+from app.api.schemas.clientSubsriptions import ClientSubsriptions
 
 @dataclass
 
 class Visits:
     id: int = field(init=False, default_factory=count().__next__)
-    client_subsription_id: int = field(default = None)
+    client_subsription_id: ClientSubsriptions = field(default = None)
     date_time: str = field(default = None)
     visit: bool = field(default = False)
 
