@@ -2,6 +2,8 @@ from datetime import datetime
 from itertools import count
 from dataclasses import dataclass, field
 
+from litestar import Controller
+
 from litestar.dto import DataclassDTO, DTOConfig
 
 
@@ -30,3 +32,8 @@ class ReadDTO(DataclassDTO[Client]):
 
 class PatchDTO(DataclassDTO[Client]):
     config = DTOConfig(exclude={'id'}, partial=True)
+
+
+class ClientController(Controller):
+    dto = WriteDTO
+    return_dto = ReadDTO
