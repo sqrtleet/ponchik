@@ -24,7 +24,7 @@ class ClientModel(Base):
     first_name: Mapped[str] = mapped_column(String(100), nullable=True)
     middle_name: Mapped[str] = mapped_column(String(100), nullable=True)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=True)
-    date_of_birth: Mapped[str] = mapped_column(String(10), nullable=True)  # можно заменить на Date
+    date_of_birth: Mapped[str] = mapped_column(String(10), nullable=True)
     email: Mapped[str] = mapped_column(String(100), nullable=True)
     client_type_id: Mapped[int] = mapped_column(Integer, nullable=True)
     bonus: Mapped[float] = mapped_column(Float, nullable=True)
