@@ -6,6 +6,8 @@ from litestar import Controller
 
 from litestar.dto import DataclassDTO, DTOConfig
 
+from app.api.enums.client_type import ClientType
+
 
 @dataclass
 class Client:
@@ -16,7 +18,7 @@ class Client:
     phone_number: str = field(default=None)
     date_of_birth: str = field(default=None)
     email: str = field(default=None)
-    client_type_id: int = field(default=None)
+    client_type: int = field(default=ClientType.STUDENT, init=False)
     bonus: float = field(default=None)
     is_active: bool = field(default=False)
     date_became_client: str = field(default=None)

@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from litestar.dto import DataclassDTO, DTOConfig
 
 
-from app.api.schemas.clientSubsriptions import ClientSubsriptions
+from app.api.schemas.client_subsription import ClientSubsriptions
 
 @dataclass
 
