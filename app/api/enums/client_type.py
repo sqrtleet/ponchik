@@ -3,7 +3,7 @@ import enum
 
 @enum.unique
 class ClientType(enum.Enum):
-    regular = 1
-    student = 2
-    large_family = 3
-    pensioner = 4
+    REGULAR = 1
+    STUDENT = 2
+    LARGE_FAMILY = 3
+    PENSIONER = 4
