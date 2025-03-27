@@ -1,6 +1,9 @@
-from datetime import datetime
+import uuid
+from datetime import datetime, date
 from itertools import count
 from dataclasses import dataclass, field
+from typing import Optional
+from uuid import UUID
 
 from litestar import Controller
 
@@ -11,17 +14,17 @@ from app.api.enums.client_type import ClientType
 
 @dataclass
 class Client:
-    id: int = field(init=False, default_factory=count().__next__)
-    last_name: str = field(default=None)
-    first_name: str = field(default=None)
-    middle_name: str = field(default=None)
-    phone_number: str = field(default=None)
-    date_of_birth: str = field(default=None)
-    email: str = field(default=None)
-    client_type: int = field(default=ClientType.STUDENT, init=False)
-    bonus: float = field(default=None)
+    id: Optional[UUID] = field(default_factory=uuid.uuid4)
+    last_name: Optional[str] = field(default=None)
+    first_name: Optional[str] = field(default=None)
+    middle_name: Optional[str] = field(default=None)
+    phone_number: Optional[str] = field(default=None)
+    date_of_birth: Optional[date] = field(default=None)
+    email: Optional[str] = field(default=None)
+    client_type: ClientType = field(default=ClientType.REGULAR)
+    bonus: Optional[float] = field(default=None)
     is_active: bool = field(default=False)
-    date_became_client: str = field(default=None)
+    date_became_client: Optional[date] = field(default=None)
 
 
 class WriteDTO(DataclassDTO[Client]):
@@ -34,8 +37,3 @@ class ReadDTO(DataclassDTO[Client]):
 
 class PatchDTO(DataclassDTO[Client]):
     config = DTOConfig(exclude={'id'}, partial=True)
-
-
-class ClientController(Controller):
-    dto = WriteDTO
-    return_dto = ReadDTO
