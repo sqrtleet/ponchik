@@ -1,11 +1,9 @@
 import uuid
-from datetime import datetime, date
-from itertools import count
+from datetime import date
 from dataclasses import dataclass, field
 from typing import Optional
 from uuid import UUID
 
-from litestar import Controller
 
 from litestar.dto import DataclassDTO, DTOConfig
 
@@ -23,7 +21,7 @@ class Client:
     email: Optional[str] = field(default=None)
     client_type: ClientType = field(default=ClientType.REGULAR)
     bonus: Optional[float] = field(default=None)
-    is_active: bool = field(default=False)
+    is_active: Optional[bool] = field(default=False)
     date_became_client: Optional[date] = field(default=None)
 
 
