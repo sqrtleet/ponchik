@@ -10,7 +10,6 @@ from litestar.status_codes import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..schemas.subscription import Subscription
 from ..schemas.trainer import Trainer, WriteDTO, ReadDTO
 from app.core.db.models.sqlalchemy_models import TrainerModel
 
@@ -34,8 +33,8 @@ class TrainerController(Controller):
                 date_joined_trainer=trainer_dto.date_joined_trainer,
                 date_left_trainer=trainer_dto.date_left_trainer
             )
-            async with db_session.begin():
-                db_session.add(trainer)
+            db_session.add(trainer)
+            await db_session.commit()
             return trainer.id
         except Exception as e:
             logger.exception(e)
@@ -59,11 +58,7 @@ class TrainerController(Controller):
             email=trainer_model.email,
             is_active=trainer_model.is_active,
             date_joined_trainer=trainer_model.date_joined_trainer,
-            date_left_trainer=trainer_model.date_left_trainer,
-            abonements=[
-                subscription.id
-                for subscription in trainer_model.subscriptions
-            ] if trainer_model.subscriptions else []
+            date_left_trainer=trainer_model.date_left_trainer
         )
 
     @get('/')
@@ -82,11 +77,7 @@ class TrainerController(Controller):
                     email=model.email,
                     is_active=model.is_active,
                     date_joined_trainer=model.date_joined_trainer,
-                    date_left_trainer=model.date_left_trainer,
-                    abonements=[
-                        subscription.id
-                        for subscription in model.subscriptions
-                    ] if model.subscriptions else []
+                    date_left_trainer=model.date_left_trainer
                 )
                 for model in models
             ]
