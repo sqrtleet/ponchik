@@ -6,10 +6,8 @@ RUN pip install --upgrade pip && pip install poetry
 
 COPY pyproject.toml poetry.lock* ./
 
-RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
+RUN poetry update
 
 COPY . .
 
-
-# CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8000"]
 CMD ["litestar", "run"]

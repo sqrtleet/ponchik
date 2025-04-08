@@ -2,7 +2,7 @@ version: "3.12"
 services:
   backend:
     build: .
-    container_name: litestar_backend
+    container_name: api
     ports:
       - "8000:8000"
     depends_on:
