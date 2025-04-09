@@ -1,20 +1,17 @@
 from pydantic_settings import BaseSettings
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-
 class Settings(BaseSettings):
-    user: str
-    password: str
-    host: str
-    port: int
-    dbname: str
+    db_user: str
+    db_password: str
+    db_host: str
+    db_port: int
+    db_name: str
 
     @property
     def database_url(self) -> str:
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}"
+        return (
+            f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}{self.db_name}"
+        )
 
     class Config:
         env_file = ".env"
