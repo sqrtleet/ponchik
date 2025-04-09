@@ -15,6 +15,6 @@ RUN poetry install --no-root
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 7777
 
 CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "7777"]
