@@ -1,4 +1,5 @@
-version: "3.12"
+version: "3.8"
+
 services:
   backend:
     build: .
@@ -6,15 +7,34 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://test:test@postgres:5432/test
+      USERNAME: ${USER}
+      PASSWORD: ${PASSWORD}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DBNAME: ${DBNAME}
+    volumes:
+      - .:/app
+    restart: on-failure
+
   postgres:
     image: postgres:17.4
     container_name: test
-    environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: test
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DBNAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${USERNAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:

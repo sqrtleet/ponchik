@@ -1,0 +1,11 @@
+--2025-04-09 14:48:03--  https://download.docker.com/linux/ubuntu/gpg
+Resolving download.docker.com (download.docker.com)... 3.164.206.39, 3.164.206.102, 3.164.206.5, ...
+Connecting to download.docker.com (download.docker.com)|3.164.206.39|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 3817 (3.7K) [binary/octet-stream]
+Saving to: ‘STDOUT’
+
+-                               0%[                                                  ]       0  --.-KB/s               -                             100%[=================================================>]   3.73K  --.-KB/s    in 0s      
+
+2025-04-09 14:48:04 (607 MB/s) - written to stdout [3817/3817]
+

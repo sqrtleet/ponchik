@@ -20,10 +20,10 @@ def fake_db():
 async def test_create_client_from_dto(fake_db):
     service = ClientService()
     dto = Client(
-        last_name="Doe",
-        first_name="John",
-        phone_number="+70000000000",
-        client_type=ClientType.REGULAR,
+        last_name="Никифоров",
+        first_name="Сергей",
+        phone_number="+79142383220",
+        client_type=ClientType.STUDENT,
         is_active=True,
     )
     fake_db.scalar.return_value = MagicMock()
@@ -80,9 +80,9 @@ async def test_delete_client(fake_db):
 async def test_create_trainer_from_dto(fake_db):
     service = TrainerService()
     dto = Trainer(
-        last_name="Ivanov",
-        first_name="Ivan",
-        phone_number="+79991234567",
+        last_name="Захаров",
+        first_name="Вячеслав",
+        phone_number="+791422387654",
         is_active=True,
     )
     result = await service.create_from_dto(fake_db, dto)
