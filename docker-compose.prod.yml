@@ -1,0 +1,50 @@
+version: "3.12"
+
+services:
+  backend:
+    build:
+      context: .
+    container_name: ponchik-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DBNAME: ${DBNAME}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  postgres:
+    image: postgres:17.4
+    container_name: ponchik-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${USERNAME}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DBNAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+volumes:
+  pg_data:
