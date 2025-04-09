@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["litestar", "run"]
+CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "7777"]
