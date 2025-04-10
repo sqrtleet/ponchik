@@ -27,26 +27,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: set up python
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
 
-      - name: Install Poetry
+      - name: install poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Configure Poetry env
+      - name: configure poetry
         run: |
           poetry config virtualenvs.create false
           poetry install --no-root
 
-      - name: Run tests
+      - name: tun tests
         env:
           DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
         run: |
           pytest tests/ -v --maxfail=1 --disable-warnings
 
-      - name: Deploy to VPS
+      - name: deploy to vps
         if: github.ref == 'refs/heads/kronter'
         uses: appleboy/ssh-action@v1.0.0
         with:

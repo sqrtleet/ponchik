@@ -1,24 +1,6 @@
 version: "3.8"
 
 services:
-  backend:
-    build: .
-    container_name: api
-    ports:
-      - "7777:7777"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-    volumes:
-      - .:/app
-    restart: on-failure
-
   postgres:
     image: postgres:17.4
     container_name: test

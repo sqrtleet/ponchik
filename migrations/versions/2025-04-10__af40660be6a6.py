@@ -1,9 +1,8 @@
-# type: ignore
 """
 
-Revision ID: c8f46502b725
+Revision ID: af40660be6a6
 Revises: 
-Create Date: 2025-04-08 18:27:36.533543
+Create Date: 2025-04-10 19:17:37.309906
 
 """
 
@@ -12,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import sqlalchemy as sa
 from alembic import op
-from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSONB, DateTimeUTC
+from advanced_alchemy.types import EncryptedString, EncryptedText, GUID, ORA_JSONB, DateTimeUTC, StoredObject
 from sqlalchemy import Text  # noqa: F401
 
 if TYPE_CHECKING:
@@ -25,9 +24,10 @@ sa.DateTimeUTC = DateTimeUTC
 sa.ORA_JSONB = ORA_JSONB
 sa.EncryptedString = EncryptedString
 sa.EncryptedText = EncryptedText
+sa.StoredObject = StoredObject
 
 # revision identifiers, used by Alembic.
-revision = 'c8f46502b725'
+revision = 'af40660be6a6'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -70,6 +70,16 @@ def schema_upgrades() -> None:
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_trainers'))
     )
+    op.create_table('users',
+    sa.Column('id', sa.GUID(length=16), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('hashed_password', sa.String(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('email', name=op.f('uq_users_email'))
+    )
     op.create_table('clients',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('last_name', sa.String(length=100), nullable=True),
@@ -82,11 +92,15 @@ def schema_upgrades() -> None:
     sa.Column('bonus', sa.Float(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('date_became_client', sa.DateTime(), nullable=True),
+    sa.Column('user_id', sa.GUID(length=16), nullable=False),
     sa.Column('sa_orm_sentinel', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTimeUTC(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['client_type_id'], ['client_types.id'], name=op.f('fk_clients_client_type_id_client_types')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_clients'))
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_clients_user_id_users')),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_clients')),
+    sa.UniqueConstraint('user_id'),
+    sa.UniqueConstraint('user_id', name=op.f('uq_clients_user_id'))
     )
     op.create_table('subscriptions',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -114,6 +128,7 @@ def schema_downgrades() -> None:
     op.drop_table('client_subscriptions')
     op.drop_table('subscriptions')
     op.drop_table('clients')
+    op.drop_table('users')
     op.drop_table('trainers')
     op.drop_table('client_types')
     # ### end Alembic commands ###

@@ -1,4 +1,3 @@
-from litestar import Litestar
 from litestar.plugins.sqlalchemy import (
     SQLAlchemyPlugin,
     SQLAlchemyAsyncConfig,
