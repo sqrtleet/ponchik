@@ -44,7 +44,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
         run: |
-          pytest -v --maxfail=1 --disable-warnings
+          pytest tests/ -v --maxfail=1 --disable-warnings
 
       - name: Deploy to VPS
         if: github.ref == 'refs/heads/kronter'

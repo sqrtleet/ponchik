@@ -13,6 +13,7 @@ loguru = ">=0.7.3,<0.8.0"
 sqlalchemy = ">=2.0.40,<3.0.0"
 asyncpg = ">=0.30.0,<0.31.0"
 pydantic-settings = "^2.8.1"
+pytest-asyncio = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 advanced-alchemy = "^1.1.1"
