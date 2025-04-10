@@ -1,15 +1,20 @@
-FROM python:3.12
+FROM python:3.12-slim
 
-WORKDIR /litestar-app
+ENV POETRY_VERSION=1.7.1 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN pip install --upgrade pip && pip install poetry
+WORKDIR /app
+
+RUN pip install --upgrade pip && pip install "poetry==$POETRY_VERSION"
 
 COPY pyproject.toml poetry.lock* ./
 
-RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install --no-root
 
 COPY . .
 
+EXPOSE 7777
 
-# CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8000"]
-CMD ["litestar", "run"]
+CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "7777"]

@@ -1,23 +1,18 @@
-import json
 import uuid
-from http.client import HTTPException
-from typing import Type, List, Set
+from typing import List
 from uuid import UUID
 
 from loguru import logger
-
-from litestar import post, get, Router, Controller
-from litestar.params import Dependency
-from litestar.status_codes import *
+from litestar import post, get, delete, patch, Router, Controller
 from litestar.dto import DTOData
-from litestar.exceptions import NotFoundException
-from sqlalchemy import select, UUID
-
+from litestar.exceptions import NotFoundException, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..schemas.client import *
-from app.core.db.models.sqlalchemy_models import ClientModel
-from ..schemas.client import Client
+from ..schemas.client import Client, WriteDTO, ReadDTO, PatchDTO
+from app.api.services.client_service import ClientService
+from app.api.enums.client_type import ClientType
+
+client_service = ClientService()
 
 
 class ClientController(Controller):
@@ -25,75 +20,57 @@ class ClientController(Controller):
     return_dto = ReadDTO
 
     @post()
-    async def create_client(self, data: DTOData[Client], db_session: AsyncSession) -> set[Exception] | UUID:
-        try:
-            client_dto = data.create_instance()
-            client = ClientModel(
-                last_name=client_dto.last_name,
-                first_name=client_dto.first_name,
-                middle_name=client_dto.middle_name,
-                phone_number=client_dto.phone_number,
-                date_of_birth=client_dto.date_of_birth,
-                email=client_dto.email,
-                client_type_id=client_dto.client_type.value,
-                bonus=client_dto.bonus,
-                is_active=client_dto.is_active,
-                date_became_client=client_dto.date_became_client
-            )
-            async with db_session.begin():
-                db_session.add(client)
-        except Exception as e:
-            logger.error(e)
-            return {e}
+    async def create_client(self, data: DTOData[Client], db_session: AsyncSession) -> UUID:
+        client_dto = data.create_instance()
+        client = await client_service.create_from_dto(db_session, client_dto)
         return client.id
 
-    @get('/{client_id:uuid}')
-    async def get_client(self, client_id: uuid.UUID, db_session: AsyncSession) -> Client:
-        result = await db_session.execute(
-            select(ClientModel).where(ClientModel.id == client_id)
-        )
-        client_model = result.scalar_one_or_none()
-        if not client_model:
-            raise NotFoundException(f'Client with id \'{client_id}\' not found')
+    @get("/")
+    async def get_clients(self, db_session: AsyncSession) -> List[Client]:
+        clients = await client_service.get_clients(db_session)
+        return [
+            Client(
+                id=c.id,
+                last_name=c.last_name,
+                first_name=c.first_name,
+                middle_name=c.middle_name,
+                phone_number=c.phone_number,
+                date_of_birth=c.date_of_birth,
+                email=c.email,
+                client_type=c.client_type.type if c.client_type else ClientType(c.client_type_id),
+                bonus=c.bonus,
+                is_active=c.is_active,
+                date_became_client=c.date_became_client,
+            )
+            for c in clients
+        ]
+
+    @get("/{client_id:uuid}")
+    async def get_client(self, client_id: UUID, db_session: AsyncSession) -> Client:
+        c = await client_service.get_client(db_session, client_id)
         return Client(
-            id=client_model.id,
-            last_name=client_model.last_name,
-            first_name=client_model.first_name,
-            middle_name=client_model.middle_name,
-            phone_number=client_model.phone_number,
-            date_of_birth=client_model.date_of_birth.date() if client_model.date_of_birth else None,
-            email=client_model.email,
-            client_type=client_model.client_type.type if client_model.client_type else ClientType(
-                client_model.client_type_id),
-            bonus=client_model.bonus,
-            is_active=client_model.is_active,
-            date_became_client=client_model.date_became_client.date()
+            id=c.id,
+            last_name=c.last_name,
+            first_name=c.first_name,
+            middle_name=c.middle_name,
+            phone_number=c.phone_number,
+            date_of_birth=c.date_of_birth,
+            email=c.email,
+            client_type=c.client_type.type if c.client_type else ClientType(c.client_type_id),
+            bonus=c.bonus,
+            is_active=c.is_active,
+            date_became_client=c.date_became_client,
         )
 
-    @get('/')
-    async def get_clients(self, db_session: AsyncSession) -> list[Client] | set[Exception]:
-        try:
-            result = await db_session.execute(select(ClientModel))
-            models = result.scalars().all()
-            return [
-                Client(
-                    id=model.id,
-                    last_name=model.last_name,
-                    first_name=model.first_name,
-                    middle_name=model.middle_name,
-                    phone_number=model.phone_number,
-                    date_of_birth=model.date_of_birth,
-                    email=model.email,
-                    client_type=model.client_type.type if model.client_type else ClientType(model.client_type_id),
-                    bonus=model.bonus,
-                    is_active=model.is_active,
-                    date_became_client=model.date_became_client,
-                )
-                for model in models
-            ]
-        except Exception as e:
-            logger.error(e)
-            return {e}
+    @patch("/{client_id:uuid}", dto=PatchDTO)
+    async def update_client(self, client_id: UUID, data: DTOData[Client], db_session: AsyncSession) -> UUID:
+        patch_data = data.as_builtins()
+        updated = await client_service.update_client(db_session, client_id, patch_data)
+        return updated.id
+
+    @delete("/{client_id:uuid}")
+    async def delete_client(self, client_id: UUID, db_session: AsyncSession) -> None:
+        await client_service.delete_client(db_session, client_id)
 
 
-client_router = Router(path='/clients', route_handlers=[ClientController])
+client_router = Router(path="/clients", route_handlers=[ClientController])

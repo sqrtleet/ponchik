@@ -1,0 +1,61 @@
+name: CI & Deploy
+
+on:
+  push:
+    branches: [kronter]
+  pull_request:
+    branches: [kronter]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17.4
+        ports: [5432:5432]
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Configure Poetry env
+        run: |
+          poetry config virtualenvs.create false
+          poetry install --no-root
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
+        run: |
+          pytest tests/ -v --maxfail=1 --disable-warnings
+
+      - name: Deploy to VPS
+        if: github.ref == 'refs/heads/kronter'
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            cd ponchik/
+            git pull origin kronter
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up -d --build

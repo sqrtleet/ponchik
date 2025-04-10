@@ -45,7 +45,7 @@ class ClientTypeModel(UUIDBase):
 class ClientSubscriptionModel(UUIDAuditBase):
     __tablename__ = "client_subscriptions"
     id: Mapped[UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
-    client_id: Mapped[int] = mapped_column(Integer, ForeignKey("clients.id"), nullable=False)
+    client_id: Mapped[UUID] = mapped_column(UUID, ForeignKey("clients.id"), nullable=False)
     subscription_id: Mapped[int] = mapped_column(Integer, ForeignKey("subscriptions.id"), nullable=False)
     subscription: Mapped["SubscriptionModel"] = relationship(
         lazy="joined", innerjoin=True, back_populates="clients_subscriptions"

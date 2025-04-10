@@ -6,8 +6,6 @@ from uuid import UUID
 
 from litestar.dto import DataclassDTO, DTOConfig
 
-from app.api.schemas.subscription import Subscription
-
 
 @dataclass
 class Trainer:
@@ -21,7 +19,6 @@ class Trainer:
     is_active: Optional[bool] = field(default=None)
     date_joined_trainer: Optional[date] = field(default=None)
     date_left_trainer: Optional[date] = field(default=None)
-    abonements: Optional[List] = field(default=None)
 
 
 class WriteDTO(DataclassDTO[Trainer]):
