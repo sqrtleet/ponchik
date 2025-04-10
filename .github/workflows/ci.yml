@@ -47,7 +47,7 @@ jobs:
           pytest tests/ -v --maxfail=1 --disable-warnings
 
       - name: Deploy to VPS
-        if: github.ref == 'refs/heads/kronter'
+        if: github.ref == 'refs/heads/develop'
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -56,6 +56,6 @@ jobs:
           port: 22
           script: |
             cd ponchik/
-            git pull origin kronter
+            git pull origin develop
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build
