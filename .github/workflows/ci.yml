@@ -2,9 +2,9 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [kronter]
+    branches: [develop]
   pull_request:
-    branches: [kronter]
+    branches: [develop]
 
 jobs:
   test-and-deploy:
