@@ -1,9 +1,9 @@
-version: "3.8"
-
 services:
   backend:
-    build: .
-    container_name: api
+    build:
+      context: .
+    container_name: ponchik-api
+    restart: unless-stopped
     ports:
       - "7777:7777"
     depends_on:
@@ -15,26 +15,34 @@ services:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
-    volumes:
-      - .:/app
-    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   postgres:
     image: postgres:17.4
-    container_name: test
-    ports:
-      - "5432:5432"
+    container_name: ponchik-db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U", "test" ]
+      test: ["CMD", "pg_isready", "-U", "test"]
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
 
 volumes:
   pg_data:
