@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 7777
 
-CMD ["litestar", "run", "--host", "0.0.0.0", "--port", "7777"]
+CMD ["sh", "-c", "python app/core/wait_for_db.py && litestar run --host 0.0.0.0 --port 7777"]

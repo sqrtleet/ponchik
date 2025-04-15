@@ -2,9 +2,9 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [kronter]
+    branches: [develop]
   pull_request:
-    branches: [kronter]
+    branches: [develop]
 
 jobs:
   test-and-deploy:
@@ -42,12 +42,12 @@ jobs:
 
       - name: tun tests
         env:
-          DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
+          DATABASE_URL: postgresql+asyncpg://test:test@postgres:5432/test
         run: |
           pytest tests/ -v --maxfail=1 --disable-warnings
 
       - name: deploy to vps
-        if: github.ref == 'refs/heads/kronter'
+        if: github.ref == 'refs/heads/develop'
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -56,6 +56,6 @@ jobs:
           port: 22
           script: |
             cd ponchik/
-            git pull origin kronter
+            git pull origin develop
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build
