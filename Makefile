@@ -1,4 +1,4 @@
-COMPOSE=docker compose -f docker-compose.prod.yml
+COMPOSE=docker compose -f docker-compose.yml
 
 up:
 	$(COMPOSE) up --build -d
