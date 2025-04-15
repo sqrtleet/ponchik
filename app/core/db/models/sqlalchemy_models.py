@@ -16,6 +16,16 @@ from advanced_alchemy.base import UUIDAuditBase, UUIDBase
 from app.api.enums.client_type import ClientType
 
 
+# class UserModel(UUIDBase):
+#     __tablename__ = "users"
+#
+#     email: Mapped[str] = mapped_column(unique=True)
+#     hashed_password: Mapped[str]
+#     is_active: Mapped[bool] = mapped_column(default=True)
+#
+#     client: Mapped["ClientModel"] = relationship(back_populates="user", uselist=False)
+
+
 class ClientModel(UUIDAuditBase):
     __tablename__ = "clients"
     id: Mapped[UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
@@ -33,6 +43,8 @@ class ClientModel(UUIDAuditBase):
     client_subscription: Mapped[Optional[ClientSubscriptionModel]] = relationship(
         "ClientSubscriptionModel", back_populates="client", uselist=False
     )
+    # user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), unique=True)
+    # user: Mapped["UserModel"] = relationship(back_populates="client")
 
 
 class ClientTypeModel(UUIDBase):
