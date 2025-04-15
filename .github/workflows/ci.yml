@@ -57,5 +57,5 @@ jobs:
           script: |
             cd ponchik/
             git pull origin develop
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up -d --build
+            make down
+            make up
