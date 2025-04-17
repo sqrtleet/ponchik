@@ -17,8 +17,8 @@ class SubscriptionController(Controller):
     dto = WriteDTO
     return_dto = ReadDTO
 
-    @get("/subs")
-    async def get_subs(self) -> List:
+    @get("/tickets")
+    async def get_ticket_types(self) -> List:
         return [
             {
                 "direction": "Йога",
@@ -41,7 +41,7 @@ class SubscriptionController(Controller):
         ]
 
     @get("/directions")
-    async def get_direction(self) -> List:
+    async def get_directions(self) -> List:
         return [
             {
                 "direction": "Йога"
@@ -55,4 +55,4 @@ class SubscriptionController(Controller):
         ]
 
 
-sub_router = Router(path="/subs", route_handlers=[SubscriptionController])
+sub_router = Router(path="/", route_handlers=[SubscriptionController])
