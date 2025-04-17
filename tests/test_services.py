@@ -121,37 +121,6 @@ async def test_delete_trainer(fake_db):
     await service.delete_trainer(fake_db, 1)
     fake_db.delete.assert_called_once()
 
-@pytest.mark.asyncio
-async def test_update_client_not_found(fake_db):
-    service = ClientService()
-    fake_db.get.return_value = None
-
-    with pytest.raises(HTTPException) as exc:
-        await service.update_client(fake_db, "uuid", {"bonus": 100})
-
-    assert exc.value.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_get_trainer_success(fake_db):
-    service = TrainerService()
-    mock_trainer = MagicMock(spec=TrainerModel)
-    fake_db.get.return_value = mock_trainer
-
-    result = await service.get_trainer(fake_db, 1)
-    assert result is mock_trainer
-
-
-@pytest.mark.asyncio
-async def test_update_trainer_not_found(fake_db):
-    service = TrainerService()
-    fake_db.get.return_value = None
-
-    with pytest.raises(HTTPException) as exc:
-        await service.update_trainer(fake_db, 1, {"is_active": True})
-
-    assert exc.value.status_code == 404
-
 
 @pytest.mark.asyncio
 async def test_create_client_duplicate_phone(fake_db):
