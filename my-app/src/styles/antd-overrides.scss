@@ -1,0 +1,10 @@
+@import './variables.scss';
+
+.ant-layout-header {
+  background: $primary-color;
+  padding: 0 24px;
+}
+  
+.ant-menu {
+  background: transparent;
+}

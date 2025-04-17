@@ -1,4 +1,15 @@
-.App {
+.layout {
+  min-height: 100vh;
+}
+
+.content {
+  padding: 24px 100px !important; // Большие отступы по бокам
+  background: #fff;
+  margin-top: 64px; // Высота header
+  min-height: calc(100vh - 64px - 70px); // 70px - высота footer
+}
+
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +46,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
