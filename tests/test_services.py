@@ -157,9 +157,9 @@ async def test_update_trainer_not_found(fake_db):
 async def test_create_client_duplicate_phone(fake_db):
     service = ClientService()
     dto = Client(
-        last_name="Захаров",
-        first_name="Вячеслав",
-        phone_number="+79991234567",
+        last_name="Никифоров",
+        first_name="Сергей",
+        phone_number="+79142383220",
         client_type=ClientType.STUDENT,
         is_active=True,
     )
