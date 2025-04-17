@@ -2,6 +2,7 @@ from litestar import Litestar
 
 # from .api.routes.auth_controller import auth_router
 from app.utils.cli import cli_plugin
+from .api.routes.subscription_controller import sub_router
 from .core.db.db import plugin
 
 from .api.routes.client_controller import client_router
@@ -12,5 +13,5 @@ async def on_startup() -> None:
     await seed_client_types()
 
 
-app = Litestar(route_handlers=[client_router, trainer_router], plugins=[plugin, cli_plugin],
+app = Litestar(route_handlers=[client_router, trainer_router, sub_router], plugins=[plugin, cli_plugin],
                on_startup=[on_startup])
