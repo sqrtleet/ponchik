@@ -32,7 +32,7 @@ class ClientSubscriptionService(CRUDService[ClientSubscriptionModel]):
             return None
         return obj
 
-    async def get_client_subscription_by_client_id(self, db: AsyncSession, client_id) -> ClientSubscriptionModel:
+    async def get_client_subscription_by_client_id(self, db: AsyncSession, client_id) -> ClientSubscriptionModel | None:
         result = await db.execute(
             select(ClientSubscriptionModel).where(ClientSubscriptionModel.client_id == client_id)
         )

@@ -16,7 +16,7 @@ from .core.db.db import plugin
 
 from .api.routes.client_controller import client_router
 from .api.routes.trainer_controller import trainer_router
-from .scripts.seeds import seed_client_types, seed_statuses, seed_schedules, seed_card_types
+from .scripts.seeds import seed_client_types, seed_statuses, seed_schedules, seed_card_types, seed_trainers
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import SecurityScheme, Components
 
@@ -26,6 +26,7 @@ async def on_startup() -> None:
     await seed_statuses()
     await seed_schedules()
     await seed_card_types()
+    await seed_trainers()
 
 
 openapi_config = OpenAPIConfig(

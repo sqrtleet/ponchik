@@ -1,9 +1,13 @@
-from sqlalchemy import select
+import uuid
+from datetime import date, datetime
+
+from sqlalchemy import select, cast, Date, DateTime
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.api.enums.client_type import ClientType
 from app.api.enums.subscription_status import SubscriptionStatusType
-from app.core.db.models.sqlalchemy_models import ClientTypeModel, ScheduleModel, StatusModel, CardTypeModel
+from app.core.db.models.sqlalchemy_models import ClientTypeModel, ScheduleModel, StatusModel, CardTypeModel, \
+    TrainerModel
 from app.core.db.db import config
 
 
@@ -46,6 +50,7 @@ async def seed_schedules():
         await session.commit()
         print("✅ Расписания добавлены")
 
+
 async def seed_statuses():
     engine = create_async_engine(config.connection_string)
     async_session = async_sessionmaker(engine, expire_on_commit=False)
@@ -61,6 +66,7 @@ async def seed_statuses():
 
         await session.commit()
         print("✅ Статусы подписок добавлены")
+
 
 async def seed_card_types():
     engine = create_async_engine(config.connection_string)
@@ -83,3 +89,34 @@ async def seed_card_types():
 
         await session.commit()
         print("✅ Карты подписок добавлены")
+
+
+async def seed_trainers():
+    engine = create_async_engine(config.connection_string)
+    async_session = async_sessionmaker(engine, expire_on_commit=False)
+
+    trainer_id = uuid.UUID("a998f4c7-f835-4128-8fc9-a93957699f3c")
+    async with async_session() as session:
+        result = await session.execute(select(TrainerModel.id))
+        existing_ids = {row[0] for row in result.all()}
+
+        if trainer_id not in existing_ids:
+            print(f"➕ Добавляем тренера: {trainer_id}")
+            session.add(
+                TrainerModel(
+                    id=trainer_id,
+                    last_name="Иванов",
+                    first_name="Иван",
+                    middle_name="Иванович",
+                    phone_number="+71234567890",
+                    date_of_birth=date(1985, 1, 1),
+                    email="ivanov@example.com",
+                    is_active=True,
+                    date_joined_trainer=date(2020, 1, 15),
+                    date_left_trainer=None
+                )
+            )
+            await session.commit()
+            print("✅ Тренер добавлен")
+        else:
+            print("ℹ️ Тренер уже существует в базе")

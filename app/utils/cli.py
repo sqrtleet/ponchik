@@ -2,7 +2,7 @@ import asyncio
 
 from click import Group
 from litestar.plugins import CLIPluginProtocol
-from app.scripts.seeds import seed_client_types, seed_statuses, seed_schedules, seed_card_types
+from app.scripts.seeds import seed_client_types, seed_statuses, seed_schedules, seed_card_types, seed_trainers
 
 
 class CLIPlugin(CLIPluginProtocol):
@@ -22,6 +22,11 @@ class CLIPlugin(CLIPluginProtocol):
         @cli.command()
         def seed_card_types_cmd():
             asyncio.run(seed_card_types())
+
+        @cli.command()
+        def seed_trainers_cmd():
+            asyncio.run(seed_trainers())
+
 
 
 cli_plugin = CLIPlugin()

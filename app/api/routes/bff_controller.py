@@ -9,6 +9,7 @@ from litestar.di import Provide
 from litestar.dto import DTOData, DataclassDTO
 from litestar.exceptions import HTTPException
 from litestar.params import Dependency
+from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_200_OK
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -157,7 +158,17 @@ class BFFController(Controller):
 
     @post("/subscribe", dto=DataclassDTO[SubscribeDTO])
     async def subscribe(self, data: DTOData[SubscribeDTO], db_session: AsyncSession) -> None:
+
         dto_obj = data.create_instance()
+        exists = await db_session.scalar(
+            select(ClientSubscriptionModel.id)
+            .where(ClientSubscriptionModel.client_id == dto_obj.client_id)
+        )
+        if exists:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail="Subscription already exists"
+            )
         subscription = SubscriptionModel(
             direction=dto_obj.direction,
             trainer_id=uuid.UUID("a998f4c7-f835-4128-8fc9-a93957699f3c"),
