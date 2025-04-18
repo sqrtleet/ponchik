@@ -3,6 +3,7 @@ from litestar.config.cors import CORSConfig
 
 # from .api.routes.auth_controller import auth_router
 from app.utils.cli import cli_plugin
+from .api.routes.bff_controller import bff_router
 from .api.routes.client_subscription_controller import client_subscription_router
 from .api.routes.subscription_controller import subscription_router
 from .api.routes.ticket_controller import ticket_controller
@@ -30,11 +31,12 @@ cors_config = CORSConfig(
 
 app = Litestar(
     route_handlers=[
+        bff_router,
         client_router,
         trainer_router,
         ticket_controller,
         subscription_router,
-        client_subscription_router
+        client_subscription_router,
     ],
     plugins=[plugin, cli_plugin],
     cors_config=cors_config,

@@ -23,7 +23,7 @@ class ClientSubscriptionController(Controller):
         return result.id
 
     @get("/")
-    async def list_all(self, db_session: AsyncSession) -> List[ClientSubscription]:
+    async def get_subscriptions(self, db_session: AsyncSession) -> List[ClientSubscription]:
         records = await client_subscription_service.get_all(db_session)
         return [
             ClientSubscription(
@@ -41,7 +41,7 @@ class ClientSubscriptionController(Controller):
         ]
 
     @get("/{record_id:uuid}")
-    async def get_one(self, record_id: UUID, db_session: AsyncSession) -> ClientSubscription:
+    async def get_subscriptions(self, record_id: UUID, db_session: AsyncSession) -> ClientSubscription:
         record = await client_subscription_service.get_client_subscription(db_session, record_id)
         return ClientSubscription(
             id=record.id,
@@ -54,14 +54,28 @@ class ClientSubscriptionController(Controller):
             status_id=record.status_id,
         )
 
+    @get("/{client_id:uuid}")
+    async def get_subscription_by_client_id(self, client_id: UUID, db_session: AsyncSession) -> ClientSubscription:
+        record = await client_subscription_service.get_client_subscription_by_client_id(db_session, client_id)
+        return ClientSubscription(
+            id=record.id,
+            client_id=record.client_id,
+            subscription_id=record.subscription_id,
+            schedule_id=record.schedule_id,
+            card_type_id=record.card_type_id,
+            purchase_date=record.purchase_date,
+            expiration_date=record.expiration_date,
+            status_id=record.status_id,
+        )
+
     @patch("/{record_id:uuid}", dto=PatchDTO)
-    async def update(self, record_id: UUID, data: DTOData[ClientSubscription], db_session: AsyncSession) -> UUID:
+    async def update_client_subscription(self, record_id: UUID, data: DTOData[ClientSubscription], db_session: AsyncSession) -> UUID:
         patch_data = data.as_builtins()
         obj = await client_subscription_service.update_client_subscription(db_session, record_id, patch_data)
         return obj.id
 
     @delete("/{record_id:uuid}")
-    async def delete(self, record_id: UUID, db_session: AsyncSession) -> None:
+    async def delete_client_subscription(self, record_id: UUID, db_session: AsyncSession) -> None:
         await client_subscription_service.delete_client_subscription(db_session, record_id)
 
 
