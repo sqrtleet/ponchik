@@ -3,6 +3,6 @@ import { PurchaseData } from '../model/types';
 
 export const subscriptionApi = {
   purchaseSubscription: (data: PurchaseData) => {
-    return api.post('/client-subscriptions', data);
-  }
+    return api.post('/bff/subscribe', data);
+  },
 };

@@ -1,19 +1,16 @@
-export interface Subscription {
+export interface PurchaseData {
+    schedule_id: number;
+    card_type_id: number;
+    direction: string;
+    client_id: string; // UUID
+  }
+  
+  export interface Subscription {
     id: number;
     title: string;
     description: string;
     price: number;
     card_type_id: number;
-  }
-  
-  export interface PurchaseData {
-    client_id: string | null;
-    subscription_id: string | null;
-    schedule_id: number | null;
-    card_type_id: number | null;
-    purchase_date: string | null;
-    expiration_date: string | null;
-    status_id: number | null;
   }
   
   export const SUBSCRIPTION_TYPES = [

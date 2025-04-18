@@ -3,7 +3,6 @@ import { Typography, Row, Col, message } from "antd";
 import { SubscriptionCard } from "../../../features/subscriptions/ui/SubscriptionCard";
 import { PurchaseModal } from "../../../features/subscriptions/ui/PurchaseModal";
 import styles from "./SubscriptionsPage.module.scss";
-import { PurchaseData } from "../../../features/subscriptions/model/types";
 
 const { Title } = Typography;
 
@@ -40,11 +39,9 @@ export const SubscriptionsPage = () => {
     setIsModalVisible(true);
   };
 
-  const handlePurchaseSubmit = (data: PurchaseData) => {
-    console.log("Отправка данных на сервер:", data);
-    // Здесь будет POST-запрос к API
+  const handlePurchaseSuccess = () => {
     setIsModalVisible(false);
-    message.success("Абонемент успешно приобретен!");
+    // Можно добавить обновление данных после успешной покупки
   };
 
   return (
@@ -67,8 +64,8 @@ export const SubscriptionsPage = () => {
       <PurchaseModal
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        onPurchase={handlePurchaseSubmit}
-        cardTypeId={selectedCardType}
+        onSuccess={handlePurchaseSuccess}
+        cardTypeId={selectedCardType!}
       />
     </div>
   );
