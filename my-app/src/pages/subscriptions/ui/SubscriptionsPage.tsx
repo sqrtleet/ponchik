@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Typography, Row, Col, message } from "antd";
+import { Typography, Row, Col } from "antd";
 import { SubscriptionCard } from "../../../features/subscriptions/ui/SubscriptionCard";
 import { PurchaseModal } from "../../../features/subscriptions/ui/PurchaseModal";
 import styles from "./SubscriptionsPage.module.scss";

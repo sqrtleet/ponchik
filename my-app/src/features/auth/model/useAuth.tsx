@@ -20,11 +20,15 @@ export const useAuth = () => {
     authStorage.setToken(token);
     authStorage.setClientId(clientId);
     setIsAuthenticated(true);
+    // Триггерим событие для других вкладок
+    window.dispatchEvent(new Event("storage"));
   };
 
   const logout = () => {
     authStorage.clear();
     setIsAuthenticated(false);
+    // Триггерим событие для других вкладок
+    window.dispatchEvent(new Event("storage"));
   };
 
   return { isAuthenticated, login, logout };
