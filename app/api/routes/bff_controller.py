@@ -1,4 +1,4 @@
-from typing import Any, Annotated
+from typing import Any, Annotated, Coroutine
 from uuid import UUID
 from litestar import get, Router, Controller, Request
 from litestar.connection import ASGIConnection
@@ -33,20 +33,17 @@ trainer_service = TrainerService()
 
 class BFFController(Controller):
     tags = ["BFFController"]
+    guards = [jwt_guard]
 
     @get("/info")
     async def get_client(
             self,
             db_session: AsyncSession,
             client_id: UUID
-    ) -> BFFResponse:
-        # user = request.user
-        # if not user:
-        #     raise HTTPException(status_code=401, detail="Unauthorized")
-        #
-        # client_id: UUID = user.id
-
+    ) -> BFFResponse | None:
         client_record = await client_service.get_client(db_session, client_id)
+        if not client_record:
+            return None
         client = Client(
             id=client_record.id,
             last_name=client_record.last_name,
@@ -62,67 +59,79 @@ class BFFController(Controller):
             date_became_client=client_record.date_became_client,
         )
 
-        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session,
-                                                                                                   client.id)
-        client_sub = ClientSubscription(
-            id=client_sub_record.id,
-            client_id=client_sub_record.client_id,
-            subscription_id=client_sub_record.subscription_id,
-            schedule_id=client_sub_record.schedule_id,
-            card_type_id=client_sub_record.card_type_id,
-            purchase_date=client_sub_record.purchase_date,
-            expiration_date=client_sub_record.expiration_date,
-            status_id=client_sub_record.status_id,
-        )
+        client_sub = None
+        sub = None
+        trainer = None
+        schedule = None
+        status = None
+        card_type = None
 
-        sub_record = await subscription_service.get_subscription(db_session, client_sub.subscription_id)
-        sub = Subscription(
-            id=sub_record.id,
-            direction=sub_record.direction,
-            periodicity=sub_record.periodicity,
-            trainer=sub_record.trainer_id,
-        )
+        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session, client.id)
+        if client_sub_record:
+            client_sub = ClientSubscription(
+                id=client_sub_record.id,
+                client_id=client_sub_record.client_id,
+                subscription_id=client_sub_record.subscription_id,
+                schedule_id=client_sub_record.schedule_id,
+                card_type_id=client_sub_record.card_type_id,
+                purchase_date=client_sub_record.purchase_date,
+                expiration_date=client_sub_record.expiration_date,
+                status_id=client_sub_record.status_id,
+            )
 
-        trainer_record = await trainer_service.get_trainer(db_session, sub.trainer)
-        trainer = Trainer(
-            id=trainer_record.id,
-            last_name=trainer_record.last_name,
-            first_name=trainer_record.first_name,
-            middle_name=trainer_record.middle_name,
-            phone_number=trainer_record.phone_number,
-            date_of_birth=trainer_record.date_of_birth,
-            email=trainer_record.email,
-            is_active=trainer_record.is_active,
-            date_joined_trainer=trainer_record.date_joined_trainer,
-            date_left_trainer=trainer_record.date_left_trainer
-        )
+            sub_record = await subscription_service.get_subscription(db_session, client_sub.subscription_id)
+            if sub_record:
+                sub = Subscription(
+                    id=sub_record.id,
+                    direction=sub_record.direction,
+                    periodicity=sub_record.periodicity,
+                    trainer=sub_record.trainer_id,
+                )
 
-        schedule_record = await db_session.scalar(
-            select(ScheduleModel).where(ScheduleModel.id == client_sub.schedule_id)
-        )
-        schedule = Schedule(
-            id=schedule_record.id,
-            day_name=schedule_record.day_name
-        )
+                trainer_record = await trainer_service.get_trainer(db_session, sub.trainer)
+                if trainer_record:
+                    trainer = Trainer(
+                        id=trainer_record.id,
+                        last_name=trainer_record.last_name,
+                        first_name=trainer_record.first_name,
+                        middle_name=trainer_record.middle_name,
+                        phone_number=trainer_record.phone_number,
+                        date_of_birth=trainer_record.date_of_birth,
+                        email=trainer_record.email,
+                        is_active=trainer_record.is_active,
+                        date_joined_trainer=trainer_record.date_joined_trainer,
+                        date_left_trainer=trainer_record.date_left_trainer
+                    )
 
-        status_record = await db_session.scalar(
-            select(StatusModel).where(StatusModel.id == client_sub.status_id)
-        )
-        status = Status(
-            id=status_record.id,
-            type=SubscriptionStatusType(1)
-        )
+            schedule_record = await db_session.scalar(
+                select(ScheduleModel).where(ScheduleModel.id == client_sub.schedule_id)
+            )
+            if schedule_record:
+                schedule = Schedule(
+                    id=schedule_record.id,
+                    day_name=schedule_record.day_name
+                )
 
-        card_type_record = await db_session.scalar(
-            select(CardTypeModel).where(CardTypeModel.id == client_sub.card_type_id)
-        )
-        card_type = CardTypes(
-            id=card_type_record.id,
-            name=card_type_record.name,
-            price=card_type_record.price,
-        )
+            status_record = await db_session.scalar(
+                select(StatusModel).where(StatusModel.id == client_sub.status_id)
+            )
+            if status_record:
+                status = Status(
+                    id=status_record.id,
+                    type=SubscriptionStatusType(1)
+                )
 
-        result = BFFResponse(
+            card_type_record = await db_session.scalar(
+                select(CardTypeModel).where(CardTypeModel.id == client_sub.card_type_id)
+            )
+            if card_type_record:
+                card_type = CardTypes(
+                    id=card_type_record.id,
+                    name=card_type_record.name,
+                    price=card_type_record.price,
+                )
+
+        return BFFResponse(
             client=client,
             subscription=sub,
             trainer=trainer,
@@ -131,7 +140,6 @@ class BFFController(Controller):
             card_type=card_type,
             status=status
         )
-        return result
 
 
 bff_router = Router(path="/bff", route_handlers=[BFFController])

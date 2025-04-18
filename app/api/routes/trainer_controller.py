@@ -48,6 +48,8 @@ class TrainerController(Controller):
     @get("/{trainer_id:uuid}")
     async def get_trainer(self, trainer_id: UUID, db_session: AsyncSession) -> Trainer:
         t = await trainer_service.get_trainer(db_session, trainer_id)
+        if not t:
+            raise HTTPException(status_code=404)
         return Trainer(
             id=t.id,
             last_name=t.last_name,

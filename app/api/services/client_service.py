@@ -37,10 +37,10 @@ class ClientService(CRUDService[ClientModel]):
 
         return await self.create(db, client)
 
-    async def get_client(self, db: AsyncSession, client_id) -> ClientModel:
+    async def get_client(self, db: AsyncSession, client_id) -> ClientModel | None:
         client = await self.get_by_id(db, client_id)
         if not client:
-            raise HTTPException(status_code=404, detail="Client not found")
+            return None
         return client
 
     async def get_clients(self, db: AsyncSession) -> Sequence[ClientModel]:

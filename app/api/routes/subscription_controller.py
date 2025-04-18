@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Any, Coroutine
 from uuid import UUID
 
 from litestar import post, get, delete, patch, Router, Controller
 from litestar.dto import DTOData
+from litestar.exceptions import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,8 +41,10 @@ class SubscriptionController(Controller):
         ]
 
     @get("/{subscription_id:uuid}")
-    async def get_subscription(self, subscription_id: UUID, db_session: AsyncSession) -> Subscription:
+    async def get_subscription(self, subscription_id: UUID, db_session: AsyncSession) -> Subscription | None:
         sub = await subscription_service.get_subscription(db_session, subscription_id)
+        if not sub:
+            raise HTTPException(status_code=404)
         return Subscription(
             id=sub.id,
             direction=sub.direction,

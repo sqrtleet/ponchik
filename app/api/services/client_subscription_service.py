@@ -26,10 +26,10 @@ class ClientSubscriptionService(CRUDService[ClientSubscriptionModel]):
         )
         return await self.create(db, client_subscription)
 
-    async def get_client_subscription(self, db: AsyncSession, subscription_id) -> ClientSubscriptionModel:
+    async def get_client_subscription(self, db: AsyncSession, subscription_id) -> ClientSubscriptionModel | None:
         obj = await self.get_by_id(db, subscription_id)
         if not obj:
-            raise HTTPException(status_code=404, detail="ClientSubscription not found")
+            return None
         return obj
 
     async def get_client_subscription_by_client_id(self, db: AsyncSession, client_id) -> ClientSubscriptionModel:
@@ -38,7 +38,7 @@ class ClientSubscriptionService(CRUDService[ClientSubscriptionModel]):
         )
         obj = result.scalar_one_or_none()
         if not obj:
-            raise HTTPException(status_code=404, detail="ClientSubscription not found")
+            return None
         return obj
 
     async def get_all(self, db: AsyncSession) -> Sequence[Row[Any] | RowMapping | Any]:

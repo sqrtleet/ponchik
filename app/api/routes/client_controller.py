@@ -51,6 +51,8 @@ class ClientController(Controller):
     @get("/{client_id:uuid}")
     async def get_client(self, client_id: UUID, db_session: AsyncSession) -> Client:
         c = await client_service.get_client(db_session, client_id)
+        if not c:
+            raise HTTPException(status_code=404)
         return Client(
             id=c.id,
             last_name=c.last_name,

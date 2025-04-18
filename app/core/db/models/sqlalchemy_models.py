@@ -28,7 +28,6 @@ class ClientModel(UUIDAuditBase):
     middle_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     date_of_birth: Mapped[Optional[Date]] = mapped_column(DateTime, nullable=True)
-    email: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     client_type_id: Mapped[int] = mapped_column(ForeignKey("client_types.id"), nullable=False)
     client_type: Mapped["ClientTypeModel"] = relationship(lazy="joined", innerjoin=True, back_populates="clients")
     bonus: Mapped[Optional[float]] = mapped_column(Float, nullable=True)

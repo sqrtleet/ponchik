@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Any, Coroutine
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,10 +21,10 @@ class SubscriptionService(CRUDService[SubscriptionModel]):
         )
         return await self.create(db, subscription)
 
-    async def get_subscription(self, db: AsyncSession, subscription_id) -> SubscriptionModel:
+    async def get_subscription(self, db: AsyncSession, subscription_id) -> SubscriptionModel | None:
         subscription = await self.get_by_id(db, subscription_id)
         if not subscription:
-            raise HTTPException(status_code=404, detail="Subscription not found")
+            return None
         return subscription
 
     async def get_subscriptions(self, db: AsyncSession) -> Sequence[SubscriptionModel]:

@@ -27,10 +27,10 @@ class TrainerService(CRUDService[TrainerModel]):
         )
         return await self.create(db, trainer)
 
-    async def get_trainer(self, db: AsyncSession, trainer_id) -> TrainerModel:
+    async def get_trainer(self, db: AsyncSession, trainer_id) -> TrainerModel | None:
         trainer = await self.get_by_id(db, trainer_id)
         if not trainer:
-            raise HTTPException(status_code=404, detail="Trainer not found")
+            return None
         return trainer
 
     async def get_trainers(self, db: AsyncSession) -> Sequence[TrainerModel]:
