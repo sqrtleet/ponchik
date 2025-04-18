@@ -4,7 +4,7 @@ import { routes } from '../../processes/routing/routes';
 import { authStorage } from '../../features/auth/model/authStorage';
 
 export const api = axios.create({
-  baseURL: 'http://213.218.238.79:7777',
+  baseURL: 'http://localhost:7777',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
