@@ -1,5 +1,6 @@
 from typing import Any, Coroutine, Sequence
 
+from litestar.status_codes import HTTP_404_NOT_FOUND
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from litestar.exceptions import HTTPException
@@ -40,7 +41,10 @@ class ClientService(CRUDService[ClientModel]):
     async def get_client(self, db: AsyncSession, client_id) -> ClientModel | None:
         client = await self.get_by_id(db, client_id)
         if not client:
-            return None
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail="Not found"
+            )
         return client
 
     async def get_clients(self, db: AsyncSession) -> Sequence[ClientModel]:

@@ -1,5 +1,6 @@
 from typing import Any, Coroutine, Sequence
 
+from litestar.status_codes import HTTP_404_NOT_FOUND
 from sqlalchemy import Row, RowMapping, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from litestar.exceptions import HTTPException
@@ -38,7 +39,10 @@ class ClientSubscriptionService(CRUDService[ClientSubscriptionModel]):
         )
         obj = result.scalar_one_or_none()
         if not obj:
-            return None
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail="Not found"
+            )
         return obj
 
     async def get_all(self, db: AsyncSession) -> Sequence[Row[Any] | RowMapping | Any]:

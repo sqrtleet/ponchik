@@ -1,5 +1,6 @@
 from typing import Sequence, Any, Coroutine
 
+from litestar.status_codes import HTTP_404_NOT_FOUND
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from litestar.exceptions import HTTPException
@@ -24,7 +25,10 @@ class SubscriptionService(CRUDService[SubscriptionModel]):
     async def get_subscription(self, db: AsyncSession, subscription_id) -> SubscriptionModel | None:
         subscription = await self.get_by_id(db, subscription_id)
         if not subscription:
-            return None
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail="Not found"
+            )
         return subscription
 
     async def get_subscriptions(self, db: AsyncSession) -> Sequence[SubscriptionModel]:
