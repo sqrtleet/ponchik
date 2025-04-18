@@ -1,8 +1,12 @@
+import datetime
+import uuid
+from dataclasses import dataclass
 from typing import Any, Annotated, Coroutine
 from uuid import UUID
-from litestar import get, Router, Controller, Request
+from litestar import get, Router, Controller, Request, post
 from litestar.connection import ASGIConnection
 from litestar.di import Provide
+from litestar.dto import DTOData, DataclassDTO
 from litestar.exceptions import HTTPException
 from litestar.params import Dependency
 from sqlalchemy import select
@@ -23,12 +27,21 @@ from app.api.services.client_subscription_service import ClientSubscriptionServi
 from app.api.services.subscription_service import SubscriptionService
 from app.api.services.trainer_service import TrainerService
 from app.core.auth.guard import jwt_guard
-from app.core.db.models.sqlalchemy_models import ScheduleModel, StatusModel, CardTypeModel
+from app.core.db.models.sqlalchemy_models import ScheduleModel, StatusModel, CardTypeModel, ClientSubscriptionModel, \
+    SubscriptionModel
 
 client_subscription_service = ClientSubscriptionService()
 subscription_service = SubscriptionService()
 client_service = ClientService()
 trainer_service = TrainerService()
+
+
+@dataclass
+class SubscribeDTO:
+    schedule_id: int
+    card_type_id: int
+    direction: str
+    client_id: UUID
 
 
 class BFFController(Controller):
@@ -66,7 +79,8 @@ class BFFController(Controller):
         status = None
         card_type = None
 
-        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session, client.id)
+        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session,
+                                                                                                   client.id)
         if client_sub_record:
             client_sub = ClientSubscription(
                 id=client_sub_record.id,
@@ -140,6 +154,26 @@ class BFFController(Controller):
             card_type=card_type,
             status=status
         )
+
+    @post("/subscribe", dto=DataclassDTO[SubscribeDTO])
+    async def subscribe(self, data: DTOData[SubscribeDTO], db_session: AsyncSession) -> None:
+        dto_obj = data.create_instance()
+        subscription = SubscriptionModel(
+            direction=dto_obj.direction,
+            trainer_id=uuid.UUID("a998f4c7-f835-4128-8fc9-a93957699f3c"),
+            periodicity="12"
+        )
+        db_session.add(subscription)
+        await db_session.flush()
+        client_subscription = ClientSubscriptionModel(
+            client_id=dto_obj.client_id,
+            subscription_id=subscription.id,
+            schedule_id=dto_obj.schedule_id,
+            card_type_id=dto_obj.card_type_id,
+            status_id=1,
+        )
+        db_session.add(client_subscription)
+        await db_session.commit()
 
 
 bff_router = Router(path="/bff", route_handlers=[BFFController])
