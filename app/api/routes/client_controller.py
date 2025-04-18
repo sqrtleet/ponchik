@@ -18,6 +18,7 @@ client_service = ClientService()
 class ClientController(Controller):
     dto = WriteDTO
     return_dto = ReadDTO
+    tags = ["ClientController"]
 
     @post()
     async def create_client(self, data: DTOData[Client], db_session: AsyncSession) -> UUID:

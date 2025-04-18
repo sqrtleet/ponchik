@@ -1,6 +1,8 @@
-from datetime import datetime
-from itertools import count
+import uuid
+
 from dataclasses import dataclass, field
+from typing import Optional
+from uuid import UUID
 
 from litestar.dto import DataclassDTO, DTOConfig
 
@@ -11,10 +13,10 @@ from app.api.schemas.trainer import Trainer
 
 @dataclass
 class Subscription:
-    id: int = field(init=False, default_factory=count().__next__)
-    direction: DirectionType = field(default=None)
-    trainer: Trainer = field(default=None)
-    periodicity: PeriodicityType = field(default=None)
+    id: Optional[UUID] = field(default_factory=uuid.uuid4)
+    direction: Optional[str| int] = field(default=None)
+    trainer: Optional[UUID] = field(default=None)
+    periodicity: Optional[str | int] = field(default=None)
 
 
 class WriteDTO(DataclassDTO[Subscription]):

@@ -1,3 +1,5 @@
+from typing import Any, Coroutine, Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from litestar.exceptions import HTTPException
@@ -41,7 +43,7 @@ class ClientService(CRUDService[ClientModel]):
             raise HTTPException(status_code=404, detail="Client not found")
         return client
 
-    async def get_clients(self, db: AsyncSession) -> list[ClientModel]:
+    async def get_clients(self, db: AsyncSession) -> Sequence[ClientModel]:
         stmt = select(self.model)
         result = await db.execute(stmt)
         return result.scalars().all()

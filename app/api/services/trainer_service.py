@@ -1,3 +1,6 @@
+from typing import Any, Coroutine, Sequence
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from litestar.exceptions import HTTPException
 
@@ -30,8 +33,9 @@ class TrainerService(CRUDService[TrainerModel]):
             raise HTTPException(status_code=404, detail="Trainer not found")
         return trainer
 
-    async def get_trainers(self, db: AsyncSession) -> list[TrainerModel]:
-        result = await db.execute(self.model.__table__.select())
+    async def get_trainers(self, db: AsyncSession) -> Sequence[TrainerModel]:
+        stmt = select(self.model)
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def update_trainer(self, db: AsyncSession, trainer_id, data: dict) -> TrainerModel:

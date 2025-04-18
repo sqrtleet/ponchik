@@ -1,4 +1,5 @@
-from itertools import count
+import uuid
+
 from datetime import date
 from dataclasses import dataclass, field
 from typing import Optional, List
@@ -9,7 +10,7 @@ from litestar.dto import DataclassDTO, DTOConfig
 
 @dataclass
 class Trainer:
-    id: Optional[int] = field(default_factory=count().__next__)
+    id: Optional[UUID] = field(default_factory=uuid.uuid4)
     last_name: Optional[str] = field(default=None)
     first_name: Optional[str] = field(default=None)
     middle_name: Optional[str] = field(default=None)

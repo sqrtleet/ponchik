@@ -1,5 +1,9 @@
+import uuid
+from datetime import date
 from itertools import count
 from dataclasses import dataclass, field
+from typing import Optional
+from uuid import UUID
 
 from litestar.dto import DataclassDTO, DTOConfig
 
@@ -12,25 +16,24 @@ from app.api.enums.subscription_status import SubscriptionStatusType
 
 
 @dataclass
-class ClientSubsriptions:
-    id: int = field(init=False, default_factory=count().__next__)
-    client_id: Client = field(default=None)
-    subscription_id: Subscription = field(default = None)
-    schedule_id: Schedule = field(default = None)
-    card_type_id: CardTypes = field(default=None)
-    price: float = field(default=None)
-    purchase_date: str = field(default=None)
-    expiration_date: str = field(default=None)
-    status_id: SubscriptionStatusType = field(default=None)
+class ClientSubscription:
+    id: Optional[UUID] = field(default_factory=uuid.uuid4)
+    client_id: Optional[UUID] = field(default=None)
+    subscription_id: Optional[UUID] = field(default = None)
+    schedule_id: Optional[int] = field(default = None)
+    card_type_id: Optional[int] = field(default=None)
+    purchase_date: Optional[date] = field(default=None)
+    expiration_date: Optional[date] = field(default=None)
+    status_id: Optional[int] = field(default=None)
 
 
-class WriteDTO(DataclassDTO[ClientSubsriptions]):
+class WriteDTO(DataclassDTO[ClientSubscription]):
     config = DTOConfig(exclude={'id'})
 
 
-class ReadDTO(DataclassDTO[ClientSubsriptions]):
+class ReadDTO(DataclassDTO[ClientSubscription]):
     config = DTOConfig(exclude={''})
 
 
-class PatchDTO(DataclassDTO[ClientSubsriptions]):
+class PatchDTO(DataclassDTO[ClientSubscription]):
     config = DTOConfig(exclude={'id'}, partial=True)

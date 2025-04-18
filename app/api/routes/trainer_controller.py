@@ -1,5 +1,6 @@
 import uuid
-from typing import List
+from typing import List, Any, Coroutine
+from uuid import UUID
 
 from litestar import post, get, delete, patch, Router, Controller
 from litestar.dto import DTOData
@@ -15,9 +16,10 @@ trainer_service = TrainerService()
 class TrainerController(Controller):
     dto = WriteDTO
     return_dto = ReadDTO
+    tags = ["TrainerController"]
 
     @post()
-    async def create_trainer(self, data: DTOData[Trainer], db_session: AsyncSession) -> int:
+    async def create_trainer(self, data: DTOData[Trainer], db_session: AsyncSession) -> UUID:
         trainer_dto = data.create_instance()
         trainer = await trainer_service.create_from_dto(db_session, trainer_dto)
         return trainer.id
@@ -41,8 +43,8 @@ class TrainerController(Controller):
             for t in trainers
         ]
 
-    @get("/{trainer_id:int}")
-    async def get_trainer(self, trainer_id: int, db_session: AsyncSession) -> Trainer:
+    @get("/{trainer_id:uuid}")
+    async def get_trainer(self, trainer_id: UUID, db_session: AsyncSession) -> Trainer:
         t = await trainer_service.get_trainer(db_session, trainer_id)
         return Trainer(
             id=t.id,
@@ -57,14 +59,14 @@ class TrainerController(Controller):
             date_left_trainer=t.date_left_trainer
         )
 
-    @patch("/{trainer_id:int}", dto=PatchDTO)
-    async def update_trainer(self, trainer_id: int, data: DTOData[Trainer], db_session: AsyncSession) -> int:
+    @patch("/{trainer_id:uuid}", dto=PatchDTO)
+    async def update_trainer(self, trainer_id: UUID, data: DTOData[Trainer], db_session: AsyncSession) -> UUID:
         patch_data = data.as_builtins()
         trainer = await trainer_service.update_trainer(db_session, trainer_id, patch_data)
         return trainer.id
 
-    @delete("/{trainer_id:int}")
-    async def delete_trainer(self, trainer_id: int, db_session: AsyncSession) -> None:
+    @delete("/{trainer_id:uuid}")
+    async def delete_trainer(self, trainer_id: UUID, db_session: AsyncSession) -> None:
         await trainer_service.delete_trainer(db_session, trainer_id)
 
 
