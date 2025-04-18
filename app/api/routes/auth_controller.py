@@ -47,11 +47,11 @@ async def register(data: DTOData[Client], db_session: AsyncSession) -> dict:
     db_session.add(client)
     await db_session.commit()
     token = create_access_token({"sub": str(client.id)}, expires_delta=timedelta(hours=1))
-    return {"message": "User registered", "token": token}
+    return {"token": token, "client_id": client.id}
 
 
 @post("/login", dto=DataclassDTO[Login])
-async def login(data: DTOData[Login], db_session: AsyncSession) -> TokenResponse:
+async def login(data: DTOData[Login], db_session: AsyncSession) -> dict:
     dto = data.create_instance()
     user = await db_session.scalar(select(ClientModel).where(ClientModel.email == dto.email))
 
@@ -59,7 +59,7 @@ async def login(data: DTOData[Login], db_session: AsyncSession) -> TokenResponse
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     token = create_access_token({"sub": str(user.id)}, expires_delta=timedelta(hours=1))
-    return TokenResponse(access_token=token, token_type="bearer")
+    return {"token": token, "client_id": user.id}
 
 
 auth_router = Router(path="/auth", route_handlers=[register, login])

@@ -18,6 +18,7 @@ passlib = "^1.7.4"
 python-jose = "^3.4.0"
 pydantic = {extras = ["email"], version = "^2.11.3"}
 bcrypt = "^4.3.0"
+pyjwt = "^2.10.1"
 
 [tool.poetry.group.dev.dependencies]
 advanced-alchemy = "^1.1.1"
