@@ -2,7 +2,6 @@ from uuid import UUID
 
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
-from litestar.security.jwt import JWTAuth
 
 # from .api.routes.auth_controller import auth_router
 from app.utils.cli import cli_plugin
@@ -55,9 +54,9 @@ cors_config = CORSConfig(
 client_service = ClientService()
 
 
-async def retrieve_user(token, connection):
-    # токен.sub — строковый UUID
-    return await client_service.get_client(UUID(token.sub))
+# async def retrieve_user(token, connection):
+#     # токен.sub — строковый UUID
+#     return await client_service.get_client(UUID(token.sub))
 
 
 # jwt_auth = JWTAuth(

@@ -38,13 +38,13 @@ class BFFController(Controller):
     async def get_client(
             self,
             db_session: AsyncSession,
-            request: Request,
+            client_id: UUID
     ) -> BFFResponse:
-        user = request.user
-        if not user:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-
-        client_id: UUID = user.id
+        # user = request.user
+        # if not user:
+        #     raise HTTPException(status_code=401, detail="Unauthorized")
+        #
+        # client_id: UUID = user.id
 
         client_record = await client_service.get_client(db_session, client_id)
         client = Client(
