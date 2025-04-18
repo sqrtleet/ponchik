@@ -21,6 +21,17 @@ services:
         max-size: "10m"
         max-file: "5"
 
+  frontend:
+    build:
+      context: .././frontend
+      dockerfile: Dockerfile
+    container_name: ponchik-front
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
   postgres:
     image: postgres:17.4
     container_name: ponchik-db
@@ -34,7 +45,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "test"]
+      test: [ "CMD", "pg_isready", "-U", "test" ]
       interval: 10s
       timeout: 5s
       retries: 5

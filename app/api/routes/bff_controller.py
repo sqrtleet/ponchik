@@ -1,15 +1,11 @@
-import datetime
 import uuid
 from dataclasses import dataclass
-from typing import Any, Annotated, Coroutine
 from uuid import UUID
-from litestar import get, Router, Controller, Request, post
-from litestar.connection import ASGIConnection
-from litestar.di import Provide
+
+from litestar import get, Router, Controller, post
 from litestar.dto import DTOData, DataclassDTO
 from litestar.exceptions import HTTPException
-from litestar.params import Dependency
-from litestar.status_codes import HTTP_400_BAD_REQUEST, HTTP_200_OK
+from litestar.status_codes import HTTP_400_BAD_REQUEST
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,9 +15,9 @@ from app.api.schemas.bff_model import BFFResponse
 from app.api.schemas.client import Client
 from app.api.schemas.client_subsription import ClientSubscription
 from app.api.schemas.schedule import Schedule
+from app.api.schemas.status import Status
 from app.api.schemas.subscription import Subscription
 from app.api.schemas.trainer import Trainer
-from app.api.schemas.status import Status
 from app.api.schemas.сard_types import CardTypes
 from app.api.services.client_service import ClientService
 from app.api.services.client_subscription_service import ClientSubscriptionService
@@ -45,6 +41,15 @@ class SubscribeDTO:
     client_id: UUID
 
 
+async def safe_get(getter, *args, **kwargs):
+    try:
+        return await getter(*args, **kwargs)
+    except HTTPException as exc:
+        if exc.status_code == 404:
+            return None
+        raise
+
+
 class BFFController(Controller):
     tags = ["BFFController"]
     guards = [jwt_guard]
@@ -55,9 +60,9 @@ class BFFController(Controller):
             db_session: AsyncSession,
             client_id: UUID
     ) -> BFFResponse | None:
-        client_record = await client_service.get_client(db_session, client_id)
+        client_record = await safe_get(client_service.get_client, db_session, client_id)
         if not client_record:
-            return None
+            return BFFResponse()
         client = Client(
             id=client_record.id,
             last_name=client_record.last_name,
@@ -80,8 +85,11 @@ class BFFController(Controller):
         status = None
         card_type = None
 
-        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session,
-                                                                                                   client.id)
+        client_sub_record = await safe_get(
+            client_subscription_service.get_client_subscription_by_client_id,
+            db_session,
+            client.id
+        )
         if client_sub_record:
             client_sub = ClientSubscription(
                 id=client_sub_record.id,
@@ -94,7 +102,11 @@ class BFFController(Controller):
                 status_id=client_sub_record.status_id,
             )
 
-            sub_record = await subscription_service.get_subscription(db_session, client_sub.subscription_id)
+            sub_record = await safe_get(
+                subscription_service.get_subscription,
+                db_session,
+                client_sub.subscription_id
+            )
             if sub_record:
                 sub = Subscription(
                     id=sub_record.id,
@@ -103,7 +115,11 @@ class BFFController(Controller):
                     trainer=sub_record.trainer_id,
                 )
 
-                trainer_record = await trainer_service.get_trainer(db_session, sub.trainer)
+                trainer_record = await safe_get(
+                    trainer_service.get_trainer,
+                    db_session,
+                    sub.trainer
+                )
                 if trainer_record:
                     trainer = Trainer(
                         id=trainer_record.id,
