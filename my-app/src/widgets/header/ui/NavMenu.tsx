@@ -1,5 +1,6 @@
-import { Menu } from "antd";
+import { Avatar, Menu } from "antd";
 import { Link } from "react-router-dom";
+import { UserOutlined } from "@ant-design/icons";
 import { routes } from "../../../processes/routing/routes";
 
 export const NavMenu = () => {
@@ -17,24 +18,33 @@ export const NavMenu = () => {
       label: <Link to={routes.subscriptions}>Абонементы</Link>,
     },
     {
-      key: "trainers",
-      label: <Link to={routes.trainers}>Тренеры</Link>,
+      key: "account",
+      label: (
+        <Link to={routes.account}>
+          <Avatar icon={<UserOutlined />} />
+        </Link>
+      ),
     },
-    {
-      key: "schedule",
-      label: <Link to={routes.schedule}>Расписание</Link>,
-    },
+    // {
+    //   key: "trainers",
+    //   label: <Link to={routes.trainers}>Тренеры</Link>,
+    // },
+    // {
+    //   key: "schedule",
+    //   label: <Link to={routes.schedule}>Расписание</Link>,
+    // },
   ];
 
   return (
     <Menu
-      theme="dark"
+      theme="light"
       mode="horizontal"
       items={items}
       style={{
         flex: 1,
         justifyContent: "flex-end",
         borderBottom: "none",
+        background: "none",
       }}
     />
   );

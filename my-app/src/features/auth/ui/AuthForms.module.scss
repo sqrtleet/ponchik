@@ -1,0 +1,19 @@
+.authContainer {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+}
+
+.footerLink {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.link {
+  color: #722ed1;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,49 @@
+.footer {
+    background-color: #61524D !important;
+    // display: flex;
+    // align-items: center;
+    // justify-content: space-between;
+    padding: 24px 20% !important; // Большие отступы по бокам
+    height: 290px;
+    // line-height: 64px;
+  
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+  
+    .section {
+      flex: 1;
+      padding: 0 16px;
+    }
+  
+    .title {
+      color: #333;
+      margin-bottom: 16px !important;
+      font-weight: 500;
+    }
+  
+    .link {
+      display: block;
+      color: #666;
+      cursor: pointer;
+      transition: color 0.3s;
+  
+      &:hover {
+        color: #722ed1;
+      }
+    }
+  
+    .divider {
+      height: auto;
+      border-color: #d9d9d9;
+      margin: 0 16px;
+    }
+  
+    .icon {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+  }

@@ -1,58 +1,53 @@
-import React from "react";
-import { Button, Card, Row, Col, Typography } from "antd";
-// import { Header } from "../../../widgets/header";
-// import { Footer } from "../../../widgets/footer";
+import { Typography, Image } from "antd";
 import styles from "./MainPage.module.scss";
+import { DirectionCards } from "../../../widgets/directionCards/ui/DirectionCards";
+
+import tyotya from "../../../assets/images/main/main.png";
+import missionImage from "../../../assets/images/main/mission.jpg";
 
 const { Title, Paragraph } = Typography;
 
 export const MainPage = () => {
   return (
     <div className={styles.mainPage}>
-      {/* <Header /> */}
-
       <section className={styles.hero}>
-        <Title level={1}>
+        <Title level={2}>
           Позаботься о своем теле в нашей уютной фитнес-студии
         </Title>
-        <Title level={3}>
-          Запишись на первое пробное занятие всего за 800 рублей
-        </Title>
-        <Button type="primary" size="large">
-          Записаться
-        </Button>
+        <Image alt="tyotya" src={tyotya} preview={false} />
       </section>
 
       <section className={styles.directions}>
-        <Title level={2}>Тренировки по разным направлениям</Title>
-        <Row gutter={16}>
-          <Col span={6}>
-            <Card cover={<img alt="Фото" src="/photo.jpg" />}>Фото</Card>
-          </Col>
-          <Col span={6}>
-            <Card cover={<img alt="Пилатес" src="/pilates.jpg" />}>
-              Пилатес
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card cover={<img alt="Стретчинг" src="/stretching.jpg" />}>
-              Стретчинг
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card cover={<img alt="Барре" src="/barre.jpg" />}>Барре</Card>
-          </Col>
-        </Row>
+        <div className={styles.classesPage}>
+          <Title level={2}>Тренировки по разным направлениям</Title>
+          <DirectionCards />
+        </div>
       </section>
 
       <section className={styles.mission}>
-        <Title level={2}>Наша миссия</Title>
-        <Paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-        </Paragraph>
+        <div className={styles.container}>
+          <div className={styles.section}>
+            <Title level={2}>Наша миссия</Title>
+            <Paragraph className={styles.text}>
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cras
+              rhoncus posuere ligula eu congue. Morbi facilisis porta aliquam.
+              Donec magna odio, tempor ut vestibulum quis, gravida sit amet
+              nibh. Nullam ultrices ligula quis nisi furibus, posuere sagittis
+              nisl accumsan. Integer pulvinar venenatis tellus, vel condimentum
+              metus tristique vitae.
+            </Paragraph>
+          </div>
+          <div className={styles.section}>
+            <Image
+              src={missionImage}
+              alt="Our Mission"
+              preview={false}
+              className={styles.image}
+              height={400}
+            />
+          </div>
+        </div>
       </section>
-
-      {/* <Footer /> */}
     </div>
   );
 };

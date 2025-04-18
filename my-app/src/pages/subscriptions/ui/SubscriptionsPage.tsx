@@ -1,41 +1,75 @@
-import React from "react";
-import { Button, Card, Typography } from "antd";
-// import { Header } from "../../../widgets/header";
-// import { Footer } from "../../../widgets/footer";
+import { useState } from "react";
+import { Typography, Row, Col, message } from "antd";
+import { SubscriptionCard } from "../../../features/subscriptions/ui/SubscriptionCard";
+import { PurchaseModal } from "../../../features/subscriptions/ui/PurchaseModal";
 import styles from "./SubscriptionsPage.module.scss";
+import { PurchaseData } from "../../../features/subscriptions/model/types";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export const SubscriptionsPage = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedCardType, setSelectedCardType] = useState<number | null>(null);
+
   const subscriptions = [
     {
-      title: "РАЗОВОЕ ЗАНЯТИЕ",
-      description: "Включает в себя одно занятие на любом направлении",
-      price: "800P",
+      id: 1,
+      title: "1 месяц 12 занятий",
+      description: "3 занятия в неделю в течение 1 месяца",
+      price: 5000,
+      card_type_id: 1,
     },
-    // Другие абонементы...
+    {
+      id: 2,
+      title: "3 месяца 36 занятий",
+      description: "3 занятия в неделю в течение 3 месяцев",
+      price: 13000,
+      card_type_id: 2,
+    },
+    {
+      id: 3,
+      title: "6 месяцев 72 занятий",
+      description: "3 занятия в неделю в течение 6 месяцев",
+      price: 24000,
+      card_type_id: 3,
+    },
   ];
 
+  const handlePurchase = (cardTypeId: number) => {
+    setSelectedCardType(cardTypeId);
+    setIsModalVisible(true);
+  };
+
+  const handlePurchaseSubmit = (data: PurchaseData) => {
+    console.log("Отправка данных на сервер:", data);
+    // Здесь будет POST-запрос к API
+    setIsModalVisible(false);
+    message.success("Абонемент успешно приобретен!");
+  };
+
   return (
-    <div className={styles.subscriptionsPage}>
-      {/* <Header /> */}
+    <div className={styles.container}>
+      <Title level={1} className={styles.title}>
+        Абонементы
+      </Title>
 
-      <main className={styles.content}>
-        <Title>ГЛАВНАЯ НАПРАВЛЕНИЯ</Title>
+      <Row gutter={[24, 24]}>
+        {subscriptions.map((subscription) => (
+          <Col key={subscription.id} xs={24} sm={12} lg={8}>
+            <SubscriptionCard
+              subscription={subscription}
+              onPurchase={handlePurchase}
+            />
+          </Col>
+        ))}
+      </Row>
 
-        <div className={styles.subscriptionList}>
-          {subscriptions.map((sub, index) => (
-            <Card key={index} className={styles.subscriptionCard}>
-              <Title level={2}>{sub.title}</Title>
-              <Text>{sub.description}</Text>
-              <Title level={3}>{sub.price}</Title>
-              <Button type="primary">Приобрести</Button>
-            </Card>
-          ))}
-        </div>
-      </main>
-
-      {/* <Footer /> */}
+      <PurchaseModal
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        onPurchase={handlePurchaseSubmit}
+        cardTypeId={selectedCardType}
+      />
     </div>
   );
 };

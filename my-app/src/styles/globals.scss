@@ -1,9 +1,9 @@
-@import './variables.scss';
+// @import './variables.scss';
 
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: $text-color;
+  color: rgba(0, 0, 0, 0.88);
 }
 
 .app-layout {

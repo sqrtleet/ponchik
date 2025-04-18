@@ -1,0 +1,33 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px !important;
+}
+
+.card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.spin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+}
