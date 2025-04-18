@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..schemas.client import Client, WriteDTO, ReadDTO, PatchDTO
 from app.api.services.client_service import ClientService
 from app.api.enums.client_type import ClientType
+from ...core.auth.guard import jwt_guard
 
 client_service = ClientService()
 
@@ -18,6 +19,7 @@ client_service = ClientService()
 class ClientController(Controller):
     dto = WriteDTO
     return_dto = ReadDTO
+    guards = [jwt_guard]
     tags = ["ClientController"]
 
     @post()

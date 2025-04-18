@@ -1,5 +1,10 @@
+from typing import Any, Annotated
 from uuid import UUID
-from litestar import get, Router, Controller
+from litestar import get, Router, Controller, Request
+from litestar.connection import ASGIConnection
+from litestar.di import Provide
+from litestar.exceptions import HTTPException
+from litestar.params import Dependency
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,6 +22,7 @@ from app.api.services.client_service import ClientService
 from app.api.services.client_subscription_service import ClientSubscriptionService
 from app.api.services.subscription_service import SubscriptionService
 from app.api.services.trainer_service import TrainerService
+from app.core.auth.guard import jwt_guard
 from app.core.db.models.sqlalchemy_models import ScheduleModel, StatusModel, CardTypeModel
 
 client_subscription_service = ClientSubscriptionService()
@@ -28,8 +34,18 @@ trainer_service = TrainerService()
 class BFFController(Controller):
     tags = ["BFFController"]
 
-    @get("{client_id:uuid}")
-    async def get_client(self, client_id: UUID, db_session: AsyncSession) -> BFFResponse:
+    @get("/info")
+    async def get_client(
+            self,
+            db_session: AsyncSession,
+            request: Request,
+    ) -> BFFResponse:
+        user = request.user
+        if not user:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
+        client_id: UUID = user.id
+
         client_record = await client_service.get_client(db_session, client_id)
         client = Client(
             id=client_record.id,
@@ -46,7 +62,8 @@ class BFFController(Controller):
             date_became_client=client_record.date_became_client,
         )
 
-        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session, client.id)
+        client_sub_record = await client_subscription_service.get_client_subscription_by_client_id(db_session,
+                                                                                                   client.id)
         client_sub = ClientSubscription(
             id=client_sub_record.id,
             client_id=client_sub_record.client_id,

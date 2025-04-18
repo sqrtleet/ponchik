@@ -1,4 +1,6 @@
 from pydantic_settings import BaseSettings
+from typing import ClassVar
+
 
 class Settings(BaseSettings):
     db_user: str
@@ -6,6 +8,9 @@ class Settings(BaseSettings):
     db_host: str
     db_port: int
     db_name: str
+    jwt_secret: str
+    jwt_algorithm: ClassVar[str] = "HS256"
+    jwt_expiration_minutes: int = 60
 
     @property
     def database_url(self) -> str:

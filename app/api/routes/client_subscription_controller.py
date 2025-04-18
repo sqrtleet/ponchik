@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.services.client_subscription_service import ClientSubscriptionService
 from app.api.schemas.client_subsription import ClientSubscription, WriteDTO, ReadDTO, PatchDTO
+from app.core.auth.guard import jwt_guard
 
 client_subscription_service = ClientSubscriptionService()
 
@@ -14,6 +15,7 @@ client_subscription_service = ClientSubscriptionService()
 class ClientSubscriptionController(Controller):
     dto = WriteDTO
     return_dto = ReadDTO
+    guards = [jwt_guard]
     tags = ["ClientSubscriptionController"]
 
     @post()

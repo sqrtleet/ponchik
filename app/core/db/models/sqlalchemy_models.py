@@ -21,6 +21,8 @@ from app.api.enums.subscription_status import SubscriptionStatusType
 class ClientModel(UUIDAuditBase):
     __tablename__ = "clients"
     id: Mapped[UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
+    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     last_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     first_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     middle_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)

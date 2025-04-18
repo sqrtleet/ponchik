@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..schemas.trainer import Trainer, WriteDTO, ReadDTO, PatchDTO
 from app.api.services.trainer_service import TrainerService
+from ...core.auth.guard import jwt_guard
 
 trainer_service = TrainerService()
 
@@ -17,6 +18,7 @@ class TrainerController(Controller):
     dto = WriteDTO
     return_dto = ReadDTO
     tags = ["TrainerController"]
+    guards = [jwt_guard]
 
     @post()
     async def create_trainer(self, data: DTOData[Trainer], db_session: AsyncSession) -> UUID:
