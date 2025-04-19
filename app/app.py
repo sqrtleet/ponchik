@@ -45,30 +45,13 @@ openapi_config = OpenAPIConfig(
     )
 )
 cors_config = CORSConfig(
-    allow_origins=["*", "http://localhost", "http://213.218.238.79", "http://176.108.255.184"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True
 )
 
 client_service = ClientService()
-
-
-# async def retrieve_user(token, connection):
-#     # токен.sub — строковый UUID
-#     return await client_service.get_client(UUID(token.sub))
-
-
-# jwt_auth = JWTAuth(
-#     token_secret=settings.jwt_secret,  # секрет кодирования JWT
-#     retrieve_user_handler=retrieve_user,  # как достать пользователя из токена
-#     exclude=[
-#         r"^/schema",
-#         r"^/docs",
-#         r"^/swagger",
-#         r"^/auth"
-#     ],
-# )
 
 app = Litestar(
     route_handlers=[
